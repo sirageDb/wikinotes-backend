@@ -12,9 +12,14 @@ const options:TOptions = {
   useFindAndModify: false,
 };
 
+
 const db = `mongodb://${
   process.env.NODE_ENV === 'production' ? 'mongodb' : 'localhost'
 }:27017/wiki-notes`;
+
+
+// const db = "mongodb://mongodb:27017/wiki-notes"
+
 
 export interface IConfig {
   db: string;
