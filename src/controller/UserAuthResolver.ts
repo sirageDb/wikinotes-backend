@@ -85,12 +85,14 @@ export default class UserAuthResolver {
         config.token,
       );
 
-      const userWthoutPassword: Partial<iUser> = {
+       const userWthoutPassword: Partial<iUser> = {
         ...user.toObject(),
       };
+
       userWthoutPassword.token = userToken;
       userWthoutPassword.id = user._id;
       delete userWthoutPassword.password;
+      console.log(userWthoutPassword);
       return userWthoutPassword;
     } catch (e) {
       throw new ApolloError('Cannot Login. Please verify credentials');
