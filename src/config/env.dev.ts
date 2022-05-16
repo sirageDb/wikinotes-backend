@@ -13,13 +13,16 @@ const options:TOptions = {
 };
 
 
-const db = `mongodb://${
-  process.env.NODE_ENV === 'production' ? 'mongodb' : 'localhost'
-}:27017/wiki-notes`;
 
-
-// const db = "mongodb://mongodb:27017/wiki-notes"
-
+const mongoProd = process.env.DB_CONNECTION_STRING || '';
+const mongoDev = "mongodb://localhost:27017/wiki-notes";
+const dbConnection = () : string => {
+  if(process.env.NODE_ENV === 'production'){
+    return mongoProd;
+  } 
+  return mongoDev
+}
+const db = dbConnection();
 
 export interface IConfig {
   db: string;
