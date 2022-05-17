@@ -24,6 +24,8 @@ export default async function startServer(
   const server: ApolloServer = new ApolloServer({
     schema,
     context: verifToken,
+    playground : true,
+    introspection : true
   });
 
   if (config.serverStart) {
@@ -47,7 +49,11 @@ export default async function startServer(
     }
   }
   // et on démarre mongoose
-  await mongoose.connect(config.db, config.options);
+  try{
+    await mongoose.connect(config.db, config.options);
+  }catch(e){
+    console.log(e);
+  }
 
   if (config.verbose) console.log('mongodb started at uri: ', config.db);
 
