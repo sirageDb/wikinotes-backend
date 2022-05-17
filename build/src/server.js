@@ -23,6 +23,8 @@ function startServer(config) {
         const server = new apollo_server_express_1.ApolloServer({
             schema,
             context: ctxTokenAuth_1.default,
+            playground: true,
+            introspection: true
         });
         if (config.serverStart) {
             const app = express_1.default();
