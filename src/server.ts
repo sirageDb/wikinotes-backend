@@ -25,7 +25,7 @@ export default async function startServer(
     schema,
     context: verifToken,
     playground : true,
-    introspection : true
+    introspection : true,
   });
 
   if (config.serverStart) {
