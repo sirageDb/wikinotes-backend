@@ -24,6 +24,8 @@ export default async function startServer(
   const server: ApolloServer = new ApolloServer({
     schema,
     context: verifToken,
+    playground : true,
+    introspection : true
   });
 
   if (config.serverStart) {
