@@ -44,7 +44,7 @@ export default async function startServer(
 
     if (config.verbose) {
       console.log(
-        `Apollo server started at: http://localhost:${config.serverPort}/`,
+        `WIKONOTE Apollo server started at port: ${config.serverPort}`,
       );
     }
   }
@@ -55,7 +55,7 @@ export default async function startServer(
     console.log(e);
   }
 
-  if (config.verbose) console.log('mongodb started at uri: ', config.db);
+  if (config.verbose) console.log('WIKINOTES mongodb started at uri: ', config.db);
 
   return server;
 }
