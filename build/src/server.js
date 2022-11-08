@@ -37,7 +37,7 @@ function startServer(config) {
                 console.log('launch');
             });
             if (config.verbose) {
-                console.log(`Apollo server started at: http://localhost:${config.serverPort}/`);
+                console.log(`WIKONOTE Apollo server started at port: ${config.serverPort}`);
             }
         }
         // et on démarre mongoose
@@ -48,7 +48,7 @@ function startServer(config) {
             console.log(e);
         }
         if (config.verbose)
-            console.log('mongodb started at uri: ', config.db);
+            console.log('WIKINOTES mongodb started at uri: ', config.db);
         return server;
     });
 }
