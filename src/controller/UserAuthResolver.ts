@@ -8,6 +8,13 @@ import { ITokenContext } from '../utils/interface';
 import UserModelGQL from '../model/graphql/userModelGQL';
 import { iUser } from '../utils/types/userTypes';
 
+
+// Change user password
+// =================================================
+
+// eleve10@aca.comp
+// Eleve&10
+
 @Resolver(UserModelGQL)
 export default class UserAuthResolver {
   @Mutation(() => Boolean)
@@ -42,6 +49,9 @@ export default class UserAuthResolver {
     }
   }
 
+
+// Reset user password
+// =================================================  
   @Mutation(() => String)
   public async resetPassword(
     @Arg('mail') mail: string,
@@ -67,6 +77,9 @@ export default class UserAuthResolver {
     return 'MonNouveauPassword145!';
   }
 
+
+// Login
+// =================================================
   @Mutation(() => UserModelGQL)
   public async login(
     @Arg('mail') mail: string,
@@ -77,7 +90,7 @@ export default class UserAuthResolver {
       if (!user) throw new Error();
       if (!(await bcrypt.compare(password, user.password))) throw new Error();
 
-      const userToken = await jwt.sign(
+      const userToken = jwt.sign(
         {
           data: { mail: user.mail, id: user._id, isTeacher: user.isTeacher },
           exp: Date.now() + 86400000,
@@ -99,6 +112,9 @@ export default class UserAuthResolver {
     }
   }
 
+
+// Check login every time user arraive to login page
+// =================================================
   @Mutation(() => UserModelGQL)
   public async checklogin(@Ctx() ctx: ITokenContext): Promise<Partial<iUser>> {
     const { user } = ctx;

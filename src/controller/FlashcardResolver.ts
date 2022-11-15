@@ -144,6 +144,9 @@ class UpdateFlashcardStudent {
   answer?: AnswerInput;
 }
 
+
+// Get all flashcards
+// ===============================================================================
 @Resolver(FlashcardModelGQL)
 export default class FlashcardResolver {
   @Query(() => [FlashcardModelGQL])
@@ -203,6 +206,12 @@ export default class FlashcardResolver {
     });
   }
 
+
+
+
+// Get a single flashcard
+// ===============================================================================
+
   @Query(() => FlashcardModelGQL)
   public async getFlashcard(
     @Arg('flashcardId') flashcardId: string,
@@ -238,6 +247,10 @@ export default class FlashcardResolver {
     flashcard.subjectId = classroom.subject[0]._id;
     return flashcard;
   }
+
+
+// Create a flashcard 
+// ===============================================================================
 
   @Mutation(() => FlashcardModelGQL)
   public async createFlashcard(
@@ -342,6 +355,11 @@ export default class FlashcardResolver {
       throw new ApolloError('Could not create flashcard');
     }
   }
+
+
+
+// Update a flashcard 
+// ===============================================================================
 
   @Mutation(() => FlashcardModelGQL)
   public async updateFlashcard(
@@ -454,6 +472,10 @@ export default class FlashcardResolver {
       throw new ApolloError(e?.message || 'Could not update flashcard');
     }
   }
+
+
+// Create a flashcard endpoint for a student
+// ===============================================================================
 
   @Mutation(() => FlashcardModelGQL)
   public async updateFlashcardStudent(

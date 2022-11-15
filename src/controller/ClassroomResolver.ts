@@ -1,11 +1,11 @@
-import { Query, Mutation, Resolver, Arg, Ctx } from 'type-graphql';
-import { ApolloError } from 'apollo-server-express';
-import userModel from '../model/user';
-import ClassroomModel from '../model/classroom';
-import ClassroomModelGQL from '../model/graphql/classroomModelGQL';
-import isMail from '../utils/isMail';
-import { iClassroom, iStudent } from '../utils/types/classroomTypes';
-import { ITokenContext } from '../utils/interface';
+import { Query, Mutation, Resolver, Arg, Ctx } from "type-graphql";
+import { ApolloError } from "apollo-server-express";
+import userModel from "../model/user";
+import ClassroomModel from "../model/classroom";
+import ClassroomModelGQL from "../model/graphql/classroomModelGQL";
+import isMail from "../utils/isMail";
+import { iClassroom, iStudent } from "../utils/types/classroomTypes";
+import { ITokenContext } from "../utils/interface";
 
 @Resolver(ClassroomModelGQL)
 export default class ClassroomResolver {
@@ -17,21 +17,21 @@ export default class ClassroomResolver {
     try {
       const classrooms = await ClassroomModel.find();
       return classrooms;
-    }
-    catch {
-      throw new ApolloError("Error getting classrooms")
+    } catch {
+      throw new ApolloError("Error getting classrooms");
     }
   }
+
   // get classroom
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
   @Query(() => ClassroomModelGQL)
-  public async getClassroom(@Arg('id') id: string): Promise<iClassroom | null> {
+  public async getClassroom(@Arg("id") id: string): Promise<iClassroom | null> {
     const classroom = await ClassroomModel.findOne({
-      _id: id,
+      _id: id
     });
     if (!classroom) {
-      throw new ApolloError('classroom does not exist');
+      throw new ApolloError("classroom does not exist");
     }
     return classroom;
   }
@@ -40,28 +40,28 @@ export default class ClassroomResolver {
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   @Mutation(() => ClassroomModelGQL)
   public async addClassroom(
-    @Arg('classroomName') classroomName: string,
-    @Arg('academicYear') academicYear: string,
-    @Arg('studentMails', () => [String]) studentMails: [string],
-    @Ctx() ctx: ITokenContext,
+    @Arg("classroomName") classroomName: string,
+    @Arg("academicYear") academicYear: string,
+    @Arg("studentMails", () => [String]) studentMails: [string],
+    @Ctx() ctx: ITokenContext
   ): Promise<iClassroom | null> {
 
     const { user } = ctx;
 
     if (!user.isTeacher) {
-      throw new ApolloError('You are not a teacher');
+      throw new ApolloError("You are not a teacher");
     }
 
     if (!studentMails.length)
       throw new ApolloError(
-        'Only one student mail is required to create a classroom.',
+        "Only one student mail is required to create a classroom."
       );
 
 
     const splitAcademicYear = academicYear.split("/");
-    
-    if(Number(splitAcademicYear[1]) < Number(splitAcademicYear[0])){
-      throw new ApolloError("Academic year format is not correct")
+
+    if (Number(splitAcademicYear[1]) < Number(splitAcademicYear[0])) {
+      throw new ApolloError("Academic year format is not correct");
     }
 
 
@@ -72,19 +72,19 @@ export default class ClassroomResolver {
 
     const students = await userModel.find({
       mail: { $in: studentMailsUnique },
-      isTeacher: false,
+      isTeacher: false
     });
 
     if (students.length !== studentMails.length) {
       // renvoyé les emails non insrits !
-      throw new ApolloError('not all emails exist as users');
+      throw new ApolloError("not all emails exist as users");
     }
 
     const newStudents = students.map((s) => ({
       firstname: s.firstname,
       lastname: s.lastname,
       mail: s.mail,
-      userId: s._id,
+      userId: s._id
     }));
 
     try {
@@ -92,7 +92,7 @@ export default class ClassroomResolver {
       const newClassroom = new ClassroomModel({
         name: classroomName,
         year: academicYear,
-        student: newStudents,
+        student: newStudents
       });
 
       // map over wanted student and add classroom in each one
@@ -104,31 +104,31 @@ export default class ClassroomResolver {
               classroom: {
                 classroomId: newClassroom._id,
                 name: newClassroom.name,
-                year: newClassroom.year,
-              },
-            },
-          },
+                year: newClassroom.year
+              }
+            }
+          }
         );
       });
 
       await userModel.findOneAndUpdate(
-        {_id : user.id},
+        { _id: user.id },
         {
           $push: {
             classroom: {
               classroomId: newClassroom._id,
               name: newClassroom.name,
-              year: newClassroom.year,
-            },
-          },
-        },
-      )
+              year: newClassroom.year
+            }
+          }
+        }
+      );
 
       // save classroom
       return await newClassroom.save();
     } catch (error) {
       console.log(error);
-      throw new ApolloError('Could not add a new classroom');
+      throw new ApolloError("Could not add a new classroom");
     }
   }
 
@@ -137,46 +137,47 @@ export default class ClassroomResolver {
 
   @Mutation(() => ClassroomModelGQL)
   public async addStudentToClassroom(
-    @Arg('studentMail') studentMail: string,
-    @Arg('id') id: string,
-    @Ctx() ctx: ITokenContext,
+    @Arg("studentMail") studentMail: string,
+    @Arg("id") id: string,
+    @Ctx() ctx: ITokenContext
   ): Promise<iClassroom | null> {
     const { user } = ctx;
 
     if (!user.isTeacher) {
-      throw new ApolloError('You are not a teacher');
+      throw new ApolloError("You are not a teacher");
     }
     // =============================================
     // check if student exists and is not a teacher and student not in the classroom
     const student = await userModel.findOne({
       mail: studentMail,
       isTeacher: false,
-      'classroom.classroomId': { $ne: id },
+      "classroom.classroomId": { $ne: id }
     });
 
     if (!student) {
-      throw new ApolloError('Student does not exist or already in the classroom');
+      throw new ApolloError("Student does not exist or already in the classroom");
     }
 
     if (!isMail(studentMail)) {
-      throw new ApolloError('Email not in correct syntax ***@***.**');
+      throw new ApolloError("Email not in correct syntax ***@***.**");
     }
 
-    const newStudent : iStudent= {
-      firstname : student.firstname,
-      lastname : student.lastname,
-      userId : student.id,
-      mail : student.mail
-    }
 
-      const classRoom = await ClassroomModel.findOneAndUpdate(
+    const newStudent: iStudent = {
+      firstname: student.firstname,
+      lastname: student.lastname,
+      userId: student.id,
+      mail: student.mail
+    };
+
+    const classRoom = await ClassroomModel.findOneAndUpdate(
       { _id: id },
       {
         $push: {
-          student: newStudent,
-        },
+          student: newStudent
+        }
       },
-      { new: true },
+      { new: true }
     );
 
     if (classRoom) {
@@ -187,12 +188,70 @@ export default class ClassroomResolver {
             classroom: {
               classroomId: id,
               name: classRoom.name,
-              year: classRoom.year,
-            },
-          },
-        },
+              year: classRoom.year
+            }
+          }
+        }
       );
     }
     return classRoom;
   }
+
+// remove student from classroom
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+  @Mutation(() => ClassroomModelGQL)
+  public async removeStudentFromClassroom(
+    @Arg("studentMail") studentMail: string,
+    @Arg("id") id: string,
+    @Ctx() ctx: ITokenContext
+  ): Promise<iClassroom | null> {
+    const { user } = ctx;
+
+    if (!user.isTeacher) {
+      throw new ApolloError("You are not a teacher");
+    }
+    // =============================================
+    // check if student exists and is not a teacher and student not in the classroom
+    const student = await userModel.findOne({
+      mail: studentMail,
+      isTeacher: false
+    });
+
+    if (!student) {
+      throw new ApolloError("Student does not exist");
+    }
+
+    if (!isMail(studentMail)) {
+      throw new ApolloError("Email not in correct syntax ***@***.**");
+    }
+
+    // delete classroom from user object
+    await userModel.findOneAndUpdate(
+      { _id: student._id },
+      {
+        $pull: {
+          classroom: {
+            classroomId: id
+          }
+        }
+      }
+    );
+
+    // delete user from classroom
+    await ClassroomModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $pull: {
+          student: { userId: student._id }
+        }
+      },
+      { new: true }
+    );
+
+    const classroom = await ClassroomModel.findOne({ _id: id });
+
+    return classroom;
+  }
 }
+
