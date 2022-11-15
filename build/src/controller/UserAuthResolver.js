@@ -8,6 +8,10 @@ const apollo_server_express_1 = require("apollo-server-express");
 const user_1 = tslib_1.__importDefault(require("../model/user"));
 const env_dev_1 = tslib_1.__importDefault(require("../config/env.dev"));
 const userModelGQL_1 = tslib_1.__importDefault(require("../model/graphql/userModelGQL"));
+// Change user password
+// =================================================
+// eleve10@aca.comp
+// Eleve&10
 let UserAuthResolver = class UserAuthResolver {
     changePassword(newPassword, oldPassword, ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -30,6 +34,8 @@ let UserAuthResolver = class UserAuthResolver {
             }
         });
     }
+    // Reset user password
+    // =================================================  
     resetPassword(mail, ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const { user } = ctx;
@@ -48,6 +54,8 @@ let UserAuthResolver = class UserAuthResolver {
             return 'MonNouveauPassword145!';
         });
     }
+    // Login
+    // =================================================
     login(mail, password) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
@@ -56,7 +64,7 @@ let UserAuthResolver = class UserAuthResolver {
                     throw new Error();
                 if (!(yield bcryptjs_1.default.compare(password, user.password)))
                     throw new Error();
-                const userToken = yield jsonwebtoken_1.default.sign({
+                const userToken = jsonwebtoken_1.default.sign({
                     data: { mail: user.mail, id: user._id, isTeacher: user.isTeacher },
                     exp: Date.now() + 86400000,
                 }, env_dev_1.default.token);
@@ -72,6 +80,8 @@ let UserAuthResolver = class UserAuthResolver {
             }
         });
     }
+    // Check login every time user arraive to login page
+    // =================================================
     checklogin(ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const { user } = ctx;

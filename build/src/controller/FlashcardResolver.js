@@ -177,6 +177,8 @@ tslib_1.__decorate([
 UpdateFlashcardStudent = tslib_1.__decorate([
     type_graphql_1.ArgsType()
 ], UpdateFlashcardStudent);
+// Get all flashcards
+// ===============================================================================
 let FlashcardResolver = class FlashcardResolver {
     getAllFlashcards(classroomId, tag, ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -222,6 +224,8 @@ let FlashcardResolver = class FlashcardResolver {
             });
         });
     }
+    // Get a single flashcard
+    // ===============================================================================
     getFlashcard(flashcardId, classroomId, ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const { user } = ctx;
@@ -244,6 +248,8 @@ let FlashcardResolver = class FlashcardResolver {
             return flashcard;
         });
     }
+    // Create a flashcard 
+    // ===============================================================================
     createFlashcard({ classroomId, subjectId, title, ressource, tag, subtitle, }, ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const { user } = ctx;
@@ -321,6 +327,8 @@ let FlashcardResolver = class FlashcardResolver {
             }
         });
     }
+    // Update a flashcard 
+    // ===============================================================================
     updateFlashcard({ classroomId, subjectId, flashcardId, title, ressource, tag, subtitle, }, ctx) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const { user } = ctx;
@@ -392,6 +400,8 @@ let FlashcardResolver = class FlashcardResolver {
             }
         });
     }
+    // Create a flashcard endpoint for a student
+    // ===============================================================================
     updateFlashcardStudent({ classroomId, subjectId, flashcardId, subtitleId, paragraph, ressource, question, answer, }, ctx) {
         var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
