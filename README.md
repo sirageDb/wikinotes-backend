@@ -1,2 +1,6 @@
-# 2104-wns-lyon-groupe1-back
-projet groupe 1 back lyon remote
+The backend of wikinotes
+
+- using Nodejs and express js library for the backend
+- GraphQL Appolo server
+- MongoDb database, using Mongoose ODM
+- Entirely coded using typescript
